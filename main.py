@@ -1,4 +1,5 @@
 from fractions import Fraction
+from math import factorial
 import csv
 
 def readFile(filename = "newton.txt"):
@@ -47,7 +48,7 @@ def Lagrange(datos, valor):
 def getDeltaY(datos, orden):
 	n =	len(datos)
 	deltaY = []
-	for x in range(orden-1):
+	for x in range(orden):
 		deltaY.append( [0 for x in range(n-(x + 1))] )
 		if x == 0:
 			for xi in range(len(deltaY[0])):
@@ -61,9 +62,20 @@ def getDeltaY(datos, orden):
 			print()
 	return deltaY
 
+def getK(datos, valor):
+	k = 0
+	pos = 0
+	for x in range(len(datos)):
+		if datos[x][0] > valor:
+			k = (valor - datos[x-1][0])/2
+			pos = x-1
+			print("pos {}".format(pos))
+			return k, pos
 
 def Newton(datos, valor, orden):
 	n =	len(datos)
+	if valor < datos[0][0] or valor > datos[n-1][0]:
+		return ;
 	resultado = 0
 	diferencia = datos[1][0] - datos[0][0]
 	for x in range(1, n):	
@@ -73,10 +85,21 @@ def Newton(datos, valor, orden):
 	if orden >= n:
 		return Lagrange(datos, valor)
 	deltaY = getDeltaY(datos, orden)
-	
+	k, pos = getK(datos, valor)
+	print("k:{} x:{}".format(k, pos))
+	resultado = datos[pos][1]
+	#print(resultado)
+
+	for x in range(1,orden+1):
+		acumulador = 1
+		for i in range(x):
+			acumulador *= k-i
+		resultado += (acumulador/factorial(x))*deltaY[x-1][pos]
+
+	print("El resultado es: {}".format(resultado))
 	return resultado
 
 	
 datos = readFile()
 #Lagrange(datos, 2)
-Newton(datos, 3.2, 4)
+Newton(datos, 8.6,3)
