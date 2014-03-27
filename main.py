@@ -44,16 +44,8 @@ def Lagrange(datos, valor):
 	print("El valor interpolado de Y para el valor X = {} es: {}".format(valor, resultado))
 	return resultado
 
-def Newton(datos, valor, orden):
+def getDeltaY(datos, orden):
 	n =	len(datos)
-	resultado = 0
-	diferencia = datos[1][0] - datos[0][0]
-	for x in range(1, n):	
-		if diferencia != (datos[x][0] - datos[x-1][0]):
-			return Lagrange(datos, valor)
-
-	if orden >= n:
-		return Lagrange(datos, valor)
 	deltaY = []
 	for x in range(orden-1):
 		deltaY.append( [0 for x in range(n-(x + 1))] )
@@ -67,7 +59,21 @@ def Newton(datos, valor, orden):
 				deltaY[x][xi] = deltaY[x-1][xi+1] - deltaY[x-1][xi]
 				print(deltaY[x][xi], end=" ")
 			print()
+	return deltaY
 
+
+def Newton(datos, valor, orden):
+	n =	len(datos)
+	resultado = 0
+	diferencia = datos[1][0] - datos[0][0]
+	for x in range(1, n):	
+		if diferencia != (datos[x][0] - datos[x-1][0]):
+			return Lagrange(datos, valor)
+
+	if orden >= n:
+		return Lagrange(datos, valor)
+	deltaY = getDeltaY(datos, orden)
+	
 	return resultado
 
 	
