@@ -64,7 +64,17 @@ def getDeltaY(datos, orden):
 					deltaY[x][xi] = deltaY[x][xi-1] + (deltaY[x][xi-1] - deltaY[x][xi-2])
 				print(deltaY[x][xi], end=" ")
 			print()
-	return deltaY
+	#Revisa el orden que se va a utilizar
+	for x in range(len(deltaY)):
+		flag = True
+		for y in range(1, len(deltaY[x])):
+			if deltaY[x][y] != deltaY[x][y-1]:
+				flag = False
+		if flag:
+			orden = x + 1
+			break
+
+	return deltaY, orden
 
 def getK(datos, valor):
 	k = 0
@@ -88,7 +98,7 @@ def Newton(datos, valor, orden):
 
 	if orden >= n:
 		return Lagrange(datos, valor)
-	deltaY = getDeltaY(datos, orden)
+	deltaY, orden = getDeltaY(datos, orden)
 	k, pos = getK(datos, valor)
 	#print("k:{} x:{}".format(k, pos))
 	resultado = datos[pos][1]
@@ -101,8 +111,6 @@ def Newton(datos, valor, orden):
 		resultado += (acumulador/factorial(x))*deltaY[x-1][pos]
 
 	print()
-	
-	################modificar el siguiente print###################################################################################
 	print("El orden polinomial que mejor se ajusta a la funcion es: {}".format(orden))
 	print("El metodo utilizado ha sido el de Newton, el resultado es aproximado ")
 	print("El valor interpolado de Y para el valor X = {} es: {}".format(valor, resultado))
