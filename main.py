@@ -2,20 +2,21 @@ from fractions import Fraction
 from math import factorial
 import csv
 
-def readFile(filename = "newton.txt"):
+def readFile(filename = "datos.txt"):
+	#print()
 	with open(filename,'r') as file:
 		try:
 			reader = csv.reader(file)
 			n = int(next(reader)[0])
 			datos = [[0 for x in range(2)] for x in range(n)]
 			x = y = 0
-			print("{:10} {:10}".format("X","Y"))
+			#print("{:10} {:10}".format("X","Y"))
 			for row in reader:
 				for val in row:
 					datos[x][y] = int(val)
-					print("{:10}".format(val), end=" ")
+			#		print("{:10}".format(val), end=" ")
 					y += 1
-				print("")
+			#	print("")
 				x += 1
 				y = 0
 
@@ -42,6 +43,7 @@ def Lagrange(datos, valor):
 		resultado += A[x] * Fraction(multi)	
 	
 	print()
+	print("El metodo utilizado ha sido el de Lagrange, el resultado es exacto ")
 	print("El valor interpolado de Y para el valor X = {} es: {}".format(valor, resultado))
 	return resultado
 
@@ -53,13 +55,13 @@ def getDeltaY(datos, orden):
 		if x == 0:
 			for xi in range(len(deltaY[0])):
 				deltaY[0][xi] = datos[xi+1][1] - datos[xi][1]
-				print(deltaY[0][xi], end=" ")
-			print()
+	#			print(deltaY[0][xi], end=" ")
+	#		print()
 		else:
 			for xi in range(len(deltaY[x])):
 				deltaY[x][xi] = deltaY[x-1][xi+1] - deltaY[x-1][xi]
-				print(deltaY[x][xi], end=" ")
-			print()
+	#			print(deltaY[x][xi], end=" ")
+	#		print()
 	return deltaY
 
 def getK(datos, valor):
@@ -69,7 +71,7 @@ def getK(datos, valor):
 		if datos[x][0] > valor:
 			k = (valor - datos[x-1][0])/2
 			pos = x-1
-			print("pos {}".format(pos))
+			#print("pos {}".format(pos))
 			return k, pos
 
 def Newton(datos, valor, orden):
@@ -86,7 +88,7 @@ def Newton(datos, valor, orden):
 		return Lagrange(datos, valor)
 	deltaY = getDeltaY(datos, orden)
 	k, pos = getK(datos, valor)
-	print("k:{} x:{}".format(k, pos))
+	#print("k:{} x:{}".format(k, pos))
 	resultado = datos[pos][1]
 	#print(resultado)
 
@@ -96,10 +98,38 @@ def Newton(datos, valor, orden):
 			acumulador *= k-i
 		resultado += (acumulador/factorial(x))*deltaY[x-1][pos]
 
-	print("El resultado es: {}".format(resultado))
+	print()
+	
+	################modificar el siguiente print###################################################################################
+	print("El orden polinomial que mejor se ajusta a la funcion es: {}".format(orden))
+	print("El metodo utilizado ha sido el de Newton, el resultado es aproximado ")
+	print("El valor interpolado de Y para el valor X = {} es: {}".format(valor, resultado))
 	return resultado
 
+
+##################################
+#             MAIN               #
+##################################
+
+
+option = "";
+while (option != "x"):
+	print()
+	print("A) Interpolacion Exacta")
+	print("B) Interpolacion Aproximada")
+	print("X) Salir")
+	print()
+
+	option = input("Por favor seleccione una opcion: ")
+	if(option == "A" or option == "a"):
+		datos = readFile()
+		print()
+		valor = int(input("Por favor indique el valor a interpolar: "))
+		Lagrange(datos, valor)
 	
-datos = readFile()
-#Lagrange(datos, 2)
-Newton(datos, 8.6,3)
+	elif(option == "B" or option == "b"):
+		datos = readFile()
+		print()
+		valor = int(input("Por favor indique el valor a interpolar: "))
+		orden = int(input("Por favor indique el orden de interpolacion: "))
+		Newton(datos, valor, orden)
