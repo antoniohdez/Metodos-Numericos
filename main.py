@@ -1,4 +1,3 @@
-from fractions import Fraction
 from math import factorial
 import csv
 
@@ -32,7 +31,7 @@ def Lagrange(datos, valor):
 		for xi in range(n):
 			if xi != x:
 				divisor *= datos[x][0] - datos[xi][0]
-		A[x] = Fraction(datos[x][1])/Fraction(divisor)
+		A[x] = datos[x][1]/divisor
 
 	resultado = 0
 	for x in range(n):
@@ -40,10 +39,10 @@ def Lagrange(datos, valor):
 		for xi in range(n):
 			if xi != x:
 				multi *= valor - datos[xi][0]
-		resultado += A[x] * Fraction(multi)	
+		resultado += A[x] * multi
 	
 	print()
-	print("El metodo utilizado ha sido el de Lagrange, el resultado es exacto ")
+	print("El metodo utilizado ha sido el de Lagrange, el resultado es exacto.")
 	print("El valor interpolado de Y para el valor X = {} es: {}".format(valor, resultado))
 	return resultado
 
@@ -51,17 +50,20 @@ def getDeltaY(datos, orden):
 	n =	len(datos)
 	deltaY = []
 	for x in range(orden):
-		deltaY.append( [0 for x in range(n-(x + 1))] )
+		deltaY.append( [0 for x in range(n-1)] )
 		if x == 0:
 			for xi in range(len(deltaY[0])):
 				deltaY[0][xi] = datos[xi+1][1] - datos[xi][1]
-	#			print(deltaY[0][xi], end=" ")
-	#		print()
+				print(deltaY[0][xi], end=" ")
+			print()
 		else:
 			for xi in range(len(deltaY[x])):
-				deltaY[x][xi] = deltaY[x-1][xi+1] - deltaY[x-1][xi]
-	#			print(deltaY[x][xi], end=" ")
-	#		print()
+				try:
+					deltaY[x][xi] = deltaY[x-1][xi+1] - deltaY[x-1][xi]
+				except IndexError:
+					deltaY[x][xi] = deltaY[x][xi-1] + (deltaY[x][xi-1] - deltaY[x][xi-2])
+				print(deltaY[x][xi], end=" ")
+			print()
 	return deltaY
 
 def getK(datos, valor):
@@ -124,12 +126,12 @@ while (option != "x"):
 	if(option == "A" or option == "a"):
 		datos = readFile()
 		print()
-		valor = int(input("Por favor indique el valor a interpolar: "))
+		valor = float(input("Por favor indique el valor a interpolar: "))
 		Lagrange(datos, valor)
 	
 	elif(option == "B" or option == "b"):
-		datos = readFile()
+		datos = readFile("newton.txt")
 		print()
-		valor = int(input("Por favor indique el valor a interpolar: "))
+		valor = float(input("Por favor indique el valor a interpolar: "))
 		orden = int(input("Por favor indique el orden de interpolacion: "))
 		Newton(datos, valor, orden)
