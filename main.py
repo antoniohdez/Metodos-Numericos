@@ -12,7 +12,7 @@ def readFile(filename = "datos.txt"):
 			#print("{:10} {:10}".format("X","Y"))
 			for row in reader:
 				for val in row:
-					datos[x][y] = int(val)
+					datos[x][y] = float(val)
 			#		print("{:10}".format(val), end=" ")
 					y += 1
 			#	print("")
@@ -79,21 +79,33 @@ def getDeltaY(datos, orden):
 def getK(datos, valor):
 	k = 0
 	pos = 0
+	diferencia = datos[1][0] - datos[0][0]
 	for x in range(len(datos)):
-		if datos[x][0] > valor:
-			k = (valor - datos[x-1][0])/2
+		if datos[x][0] >= valor:
+			k = (valor - datos[x-1][0])/diferencia
 			pos = x-1
-			#print("pos {}".format(pos))
+			print("pos {}".format(k))
 			return k, pos
 
 def Newton(datos, valor, orden):
 	n =	len(datos)
 	if valor < datos[0][0] or valor > datos[n-1][0]:
-		return ;
+		print("Valor fuera de rango")
+		return 0;
+	for val in range(len(datos[0])):
+		if valor == datos[0][val]:
+			resultado = datos[1][val]
+			print()
+			print("El valor esta en la tabla")
+			print("No se ha utilizado ningun metodo de interpolacion")
+			print("El valor de Y para el valor X = {} es: {}".format(valor, resultado))
+			return resultado
+	
 	resultado = 0
 	diferencia = datos[1][0] - datos[0][0]
+
 	for x in range(1, n):	
-		if diferencia != (datos[x][0] - datos[x-1][0]):
+		if (diferencia != (datos[x][0] - datos[x-1][0])):
 			return Lagrange(datos, valor)
 
 	if orden >= n:
@@ -138,7 +150,7 @@ while (option != "x"):
 		Lagrange(datos, valor)
 	
 	elif(option == "B" or option == "b"):
-		datos = readFile("newton.txt")
+		datos = readFile()
 		print()
 		valor = float(input("Por favor indique el valor a interpolar: "))
 		orden = int(input("Por favor indique el orden de interpolacion: "))
